@@ -25,9 +25,9 @@ export async function extractResumeText(file: File): Promise<string> {
       throw new ResumeFileError("The selected file is not a valid PDF.");
     }
 
-    await import("pdf-parse/worker");
+    const { CanvasFactory } = await import("pdf-parse/worker");
     const { PDFParse } = await import("pdf-parse");
-    const parser = new PDFParse({ data: buffer });
+    const parser = new PDFParse({ data: buffer, CanvasFactory });
     try {
       const parsed = await parser.getText();
       return parsed.text.trim();
