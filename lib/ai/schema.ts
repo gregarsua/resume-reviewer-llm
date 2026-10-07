@@ -17,3 +17,19 @@ export const reviewSchema = z.object({
     )
     .min(1),
 });
+
+
+export const geminiResponseSchema = z.object({
+  candidates: z
+    .array(
+      z.object({
+        content: z
+          .object({
+            parts: z.array(z.object({ text: z.string().optional() })),
+          })
+          .optional(),
+        finishReason: z.string().optional(),
+      }),
+    )
+    .optional(),
+});
