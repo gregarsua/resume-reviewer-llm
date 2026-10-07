@@ -5,6 +5,7 @@ import { useSyncExternalStore } from "react";
 import SkillBreakdown from "@/components/SkillBreakdown";
 import { reviewSchema } from "@/lib/ai/schema";
 import type { ResumeReview } from "@/types/review";
+import NoReview from "@/components/NoReview";
 
 function subscribeToReview(callback: () => void) {
   window.addEventListener("storage", callback);
@@ -51,20 +52,7 @@ export default function Results() {
   if (!review) {
     return (
       <main className="upload-page grid min-h-screen place-items-center px-5 font-sans">
-        <section className="max-w-md rounded-2xl border border-[#dce6dd] bg-white p-8 text-center">
-          <h1 className="text-xl font-semibold text-[#17251e]">
-            Review unavailable
-          </h1>
-          <p className="mt-3 text-sm leading-6 text-[#5f6d64]" role="alert">
-            {error}
-          </p>
-          <Link
-            className="mt-6 inline-flex rounded-lg bg-[#203c2d] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#315741]"
-            href="/"
-          >
-            Back to upload
-          </Link>
-        </section>
+        <NoReview error={error} />
       </main>
     );
   }

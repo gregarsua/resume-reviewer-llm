@@ -38,12 +38,12 @@ export default function SkillBreakdown({ skills }: SkillBreakdownProps) {
         {skills.map((skill) => (
           <div
             aria-label={`${skill.name}: ${skill.score}% match`}
-            className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-2 sm:grid-cols-[minmax(8rem,0.8fr)_2fr_auto] sm:items-center sm:gap-5"
+            className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-2 sm:grid-cols-[minmax(8rem,0.8fr)_2fr_auto] sm:items-center"
             key={skill.name}
             role="group"
           >
-            <div className="col-span-2 flex items-baseline justify-between gap-3 sm:col-span-1 sm:block">
-              <p className="text-sm font-semibold text-[#25362c]">
+            <div className="col-span-2 flex min-w-0 items-baseline justify-between gap-3 sm:col-span-1 sm:block">
+              <p className="min-w-28 wrap-break-word text-sm font-semibold text-[#25362c]">
                 {skill.name}
               </p>
               <span className="text-xs text-[#718077] sm:hidden">
@@ -67,18 +67,21 @@ export default function SkillBreakdown({ skills }: SkillBreakdownProps) {
               <span className="w-9 text-right text-sm font-semibold tabular-nums text-[#203c2d]">
                 {skill.score}%
               </span>
-              <span className="w-24 text-xs text-[#718077]">{skill.note}</span>
             </div>
             <span className="text-right text-sm font-semibold tabular-nums text-[#203c2d] sm:hidden">
               {skill.score}%
             </span>
-            <p className="col-span-2 text-xs leading-5 text-[#718077] sm:col-span-3 sm:col-start-2">
+            <p className="col-span-2 wrap-break-word text-xs leading-5 text-[#718077] sm:col-span-3 sm:col-start-2">
               <span className="font-semibold text-[#5f6d64]">Evidence:</span>{" "}
               {skill.evidence}
-              <span className="ml-2 font-semibold text-[#5f6d64]">
-                Recommendation:
-              </span>{" "}
+            </p>
+            <p className="col-span-2 wrap-break-word text-xs leading-5 text-[#718077] sm:col-span-3 sm:col-start-2">
+              <span className="font-semibold text-[#5f6d64]">Recommendation:</span>{" "}
               {skill.recommendation}
+            </p>
+            <p className="col-span-2 wrap-break-word text-xs leading-5 text-[#718077] sm:col-span-3 sm:col-start-2">
+              <span className="font-semibold text-[#5f6d64]">Note:</span>{" "}
+              {skill.note}
             </p>
           </div>
         ))}

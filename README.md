@@ -4,6 +4,10 @@ Compare a PDF or DOCX resume with a job description and get an evidence-based
 skills review. Resume text is extracted on the server and sent to the Gemini
 API for analysis; the API key is never sent to the browser.
 
+## Note
+
+This is using a free tier plan on gemini API
+
 ## Set up a free Gemini API key
 
 1. Create an API key in [Google AI Studio](https://aistudio.google.com/apikey).
@@ -17,6 +21,7 @@ API for analysis; the API key is never sent to the browser.
 
    Keep `.env.local` private. It is ignored by Git. Do not prefix this variable
    with `NEXT_PUBLIC_`.
+
 3. Install packages and start the app:
 
    ```bash
