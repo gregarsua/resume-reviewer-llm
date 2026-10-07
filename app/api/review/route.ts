@@ -1,5 +1,5 @@
-import { AIServiceError } from "@/lib/ai/client";
 import { reviewResume } from "@/lib/ai/reviewer";
+import { AIServiceError } from "@/lib/utils/ai_service_error";
 import {
   extractResumeText,
   MAX_RESUME_FILE_SIZE_BYTES,
