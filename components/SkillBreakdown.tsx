@@ -1,14 +1,4 @@
-type SkillMatch = {
-  name: string;
-  score: number;
-  note: string;
-  evidence: string;
-  recommendation: string;
-};
-
-type SkillBreakdownProps = {
-  skills: SkillMatch[];
-};
+import { SkillBreakdownProps } from "@/types/skill_breakdown";
 
 export default function SkillBreakdown({ skills }: SkillBreakdownProps) {
   return (
@@ -74,10 +64,6 @@ export default function SkillBreakdown({ skills }: SkillBreakdownProps) {
             <p className="col-span-2 wrap-break-word text-xs leading-5 text-[#718077] sm:col-span-3 sm:col-start-2">
               <span className="font-semibold text-[#5f6d64]">Evidence:</span>{" "}
               {skill.evidence}
-            </p>
-            <p className="col-span-2 wrap-break-word text-xs leading-5 text-[#718077] sm:col-span-3 sm:col-start-2">
-              <span className="font-semibold text-[#5f6d64]">Recommendation:</span>{" "}
-              {skill.recommendation}
             </p>
             <p className="col-span-2 wrap-break-word text-xs leading-5 text-[#718077] sm:col-span-3 sm:col-start-2">
               <span className="font-semibold text-[#5f6d64]">Note:</span>{" "}

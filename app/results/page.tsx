@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
+import RecommendedChanges from "@/components/RecommendedChanges";
 import SkillBreakdown from "@/components/SkillBreakdown";
 import { reviewSchema } from "@/lib/ai/schema";
 import type { ResumeReview } from "@/types/review";
@@ -178,6 +179,7 @@ export default function Results() {
           </div>
         </section>
 
+        <RecommendedChanges skills={review.skills} />
         <SkillBreakdown skills={review.skills} />
       </main>
     </div>
