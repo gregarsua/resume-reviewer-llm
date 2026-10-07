@@ -1,4 +1,5 @@
-import { generateAIResponse, AIServiceError } from "./client";
+import { AIServiceError } from "../utils/ai_service_error";
+import { generateAIResponse, } from "./client";
 import { createResumeReviewPrompt } from "./prompts";
 import { reviewSchema } from "./schema";
 
