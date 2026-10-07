@@ -1,6 +1,4 @@
 import mammoth from "mammoth";
-import "pdf-parse/worker";
-import { PDFParse } from "pdf-parse";
 
 export const MAX_RESUME_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
@@ -27,6 +25,8 @@ export async function extractResumeText(file: File): Promise<string> {
       throw new ResumeFileError("The selected file is not a valid PDF.");
     }
 
+    await import("pdf-parse/worker");
+    const { PDFParse } = await import("pdf-parse");
     const parser = new PDFParse({ data: buffer });
     try {
       const parsed = await parser.getText();
