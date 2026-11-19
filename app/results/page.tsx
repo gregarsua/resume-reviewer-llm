@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import RecommendedChanges from "@/components/RecommendedChanges";
+import ResumePreview from "@/components/ResumePreview";
 import SkillBreakdown from "@/components/SkillBreakdown";
 import { reviewSchema } from "@/lib/ai/schema";
+import { getPreviewFile } from "@/lib/db/resume_preview";
 import type { ResumeReview } from "@/types/review";
 import NoReview from "@/components/NoReview";
 
@@ -18,11 +20,26 @@ function getStoredReview() {
 }
 
 export default function Results() {
+  const [previewFile, setPreviewFile] = useState<File | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(true);
   const storedReview = useSyncExternalStore(
     subscribeToReview,
     getStoredReview,
     () => undefined,
   );
+
+  useEffect(() => {
+    let active = true;
+    getPreviewFile().then((file) => {
+      if (active) {
+        setPreviewFile(file);
+        setPreviewLoading(false);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   let review: ResumeReview | null = null;
   let error = "";
@@ -143,6 +160,45 @@ export default function Results() {
             <p className="mt-2 text-sm leading-6 text-[#5f6d64]">
               {review.overallNote}
             </p>
+          </div>
+        </section>
+
+        <section className="mb-6 grid gap-6 lg:grid-cols-[minmax(18rem,0.7fr)_minmax(0,1.3fr)]">
+          <ResumePreview file={previewFile} isLoading={previewLoading} />
+
+          <div className="rounded-2xl border border-[#dce6dd] bg-white p-6">
+            <h2 className="text-base font-semibold text-[#17251e]">
+              Top improvement priorities
+            </h2>
+            <p className="mt-1 text-sm leading-5 text-[#718077]">
+              Lowest-match requirements, in priority order.
+            </p>
+            <ol className="mt-4 space-y-3">
+              {[...review.skills]
+                .sort((first, second) => first.score - second.score)
+                .slice(0, 5)
+                .map((skill, index) => (
+                  <li
+                    className="flex items-start gap-3 border-b border-[#edf1ee] pb-3 last:border-0 last:pb-0"
+                    key={skill.name}
+                  >
+                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#e5eee6] text-xs font-semibold text-[#315741]">
+                      {index + 1}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-[#25362c]">
+                        {skill.name}
+                      </p>
+                      <p className="mt-1 text-xs leading-5 text-[#718077]">
+                        {skill.recommendation}
+                      </p>
+                    </div>
+                    <span className="ml-auto shrink-0 text-xs font-semibold tabular-nums text-[#718077]">
+                      {skill.score}%
+                    </span>
+                  </li>
+                ))}
+            </ol>
           </div>
         </section>
 

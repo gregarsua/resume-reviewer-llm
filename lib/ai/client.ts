@@ -1,29 +1,5 @@
-import { z } from "zod";
-
-const geminiResponseSchema = z.object({
-  candidates: z
-    .array(
-      z.object({
-        content: z
-          .object({
-            parts: z.array(z.object({ text: z.string().optional() })),
-          })
-          .optional(),
-        finishReason: z.string().optional(),
-      }),
-    )
-    .optional(),
-});
-
-export class AIServiceError extends Error {
-  constructor(
-    message: string,
-    readonly status: number,
-  ) {
-    super(message);
-    this.name = "AIServiceError";
-  }
-}
+import { AIServiceError } from "../utils/ai_service_error";
+import { geminiResponseSchema } from "./schema";
 
 export async function generateAIResponse(prompt: string): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
