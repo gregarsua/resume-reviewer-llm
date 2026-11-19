@@ -1,9 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { reviewSchema } from "@/lib/ai/schema";
+import { savePreviewFile } from "@/lib/db/resume_preview";
 import type { ResumeReview } from "@/types/review";
+import PdfPreviewModal from "@/components/PdfPreviewModal";
 
 function getErrorMessage(payload: unknown) {
   if (
@@ -21,6 +23,31 @@ export default function Home() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [previewName, setPreviewName] = useState("");
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
+  function handleResumeChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.currentTarget.files?.[0];
+    setPreviewName(file?.name ?? "");
+
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl("");
+    }
+
+    if (file?.name.toLowerCase().endsWith(".pdf")) {
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  }
 
   async function submitDetails(event: ChangeEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -55,6 +82,8 @@ export default function Home() {
         "resume-review",
         JSON.stringify(parsedReview.data satisfies ResumeReview),
       );
+      const resume = new FormData(event.currentTarget).get("resume");
+      await savePreviewFile(resume instanceof File ? resume : null);
       router.push("/results");
     } catch (submissionError) {
       setError(
@@ -92,15 +121,26 @@ export default function Home() {
           >
             Resume file
           </label>
-          <input
-            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            aria-describedby="resume-help"
-            className="block w-full cursor-pointer rounded-lg border border-[#d6e1d8] bg-[#f8faf8] text-sm text-[#435248] file:mr-4 file:cursor-pointer file:border-0 file:bg-[#203c2d] file:px-5 file:py-2 file:font-semibold file:text-white hover:file:bg-[#315741] focus:outline-none focus:ring-2 focus:ring-[#73947b] focus:ring-offset-2"
-            id="resume"
-            name="resume"
-            required
-            type="file"
-          />
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <input
+              accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              aria-describedby="resume-help"
+              className="min-w-0 flex-1 cursor-pointer rounded-lg border border-[#d6e1d8] bg-[#f8faf8] text-sm text-[#435248] file:mr-4 file:cursor-pointer file:border-0 file:bg-[#203c2d] file:px-5 file:py-2 file:font-semibold file:text-white hover:file:bg-[#315741] focus:outline-none focus:ring-2 focus:ring-[#73947b] focus:ring-offset-2"
+              id="resume"
+              name="resume"
+              onChange={handleResumeChange}
+              required
+              type="file"
+            />
+            <button
+              className="rounded-lg border border-[#d6e1d8] bg-white px-2 text-xs font-semibold text-[#315741] hover:border-[#73947b] hover:bg-[#f8faf8] hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={!previewUrl}
+              onClick={() => setIsPreviewOpen(true)}
+              type="button"
+            >
+              Preview PDF
+            </button>
+          </div>
           <span className="mt-1 block text-xs leading-6 text-[#718077]" id="resume-help">
             PDF or DOCX, up to 10 MB. Scanned image-only PDFs are not supported.
           </span>
@@ -136,6 +176,14 @@ export default function Home() {
           </button>
         </form>
       </main>
+
+      {/* Preview Modal */}
+      <PdfPreviewModal
+        fileName={previewName}
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        previewUrl={previewUrl}
+      />
     </div>
   );
 }
